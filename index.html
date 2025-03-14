@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEXTRA 25 SCOREBOARD</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-firestore-compat.min.js"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/6.6.2/firebase-app.js"></script>
+    <!-- Add Firebase Auth and Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/6.6.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.6.2/firebase-firestore.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -31,14 +33,35 @@
         <div class="flex mb-6 border-b">
             <button id="scoreboardTab"
                 class="px-6 py-3 font-medium text-indigo-700 border-b-2 border-indigo-700">Scoreboard</button>
-            <button id="eventsTab" class="px-6 py-3 font-medium text-gray-600">Events & Winners</button>
+            <button id="eventsTab" class="px-6 py-3 font-medium text-gray-600">Arts Events</button>
+            <button id="sportsTab" class="px-6 py-3 font-medium text-gray-600">Sports Events</button>
             <button id="adminTab" class="hidden px-6 py-3 font-medium text-gray-600">Admin Panel</button>
         </div>
 
         <!-- Scoreboard View -->
         <div id="scoreboardView" class="block">
             <h2 class="text-2xl font-bold mb-6 text-gray-800">Team Standings</h2>
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+            <!-- Scoreboard Tabs -->
+            <div class="mb-4 border-b">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+                    <li class="mr-2">
+                        <button id="overallScoreTab"
+                            class="inline-block p-4 rounded-t-lg border-b-2 border-indigo-600 text-indigo-600 active">Overall</button>
+                    </li>
+                    <li class="mr-2">
+                        <button id="artsScoreTab"
+                            class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300">Arts</button>
+                    </li>
+                    <li class="mr-2">
+                        <button id="sportsScoreTab"
+                            class="inline-block p-4 rounded-t-lg border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300">Sports</button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Overall Scoreboard -->
+            <div id="overallScoreboardSection" class="bg-white rounded-lg shadow-md overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -61,13 +84,71 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Arts Scoreboard -->
+            <div id="artsScoreboardSection" class="hidden bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Rank</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Team</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Points</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                First Places</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Second Places</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Third Places</th>
+                        </tr>
+                    </thead>
+                    <tbody id="artsTeamStandings" class="bg-white divide-y divide-gray-200">
+                        <!-- Arts team standings will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sports Scoreboard -->
+            <div id="sportsScoreboardSection" class="hidden bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Rank</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Team</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Points</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                First Places</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Second Places</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Third Places</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sportsTeamStandings" class="bg-white divide-y divide-gray-200">
+                        <!-- Sports team standings will be populated here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Events & Winners View -->
+        <!-- Arts Events View -->
         <div id="eventsView" class="hidden">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Events & Winners</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Arts Events & Winners</h2>
             <div id="eventsList" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <!-- Event cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Sports Events View -->
+        <div id="sportsView" class="hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Sports Events & Winners</h2>
+            <div id="sportsList" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Sports event cards will be populated here -->
             </div>
         </div>
 
@@ -105,7 +186,7 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="eventName">Event Name</label>
                             <input id="eventName" type="text"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                placeholder="Painting Competition">
+                                placeholder="Event Name">
                         </div>
                         <div>
                             <label class="block text-gray-700 text-sm font-bold mb-2"
@@ -119,12 +200,22 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="pointSystem">Points
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="eventPointSystem">Points
                                 System</label>
                             <select id="eventPointSystem"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                 <option value="standard">Standard (5-3-1)</option>
                                 <option value="enhanced">Enhanced (10-7-4)</option>
+                                <option value="enhancedS">Enhanced (S) (10-6-3)</option>
+                                <option value="sports">Sports (5-3-2)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="eventType">Event Type</label>
+                            <select id="eventType"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                <option value="arts">Arts Event</option>
+                                <option value="sports">Sports Event</option>
                             </select>
                         </div>
                     </div>
@@ -142,6 +233,7 @@
                                 Event</label>
                             <select id="resultEvent"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                <option value="">Select an event</option>
                                 <!-- Events will be populated here -->
                             </select>
                         </div>
@@ -264,15 +356,19 @@
     </div>
 
     <script>
-        // Firebase configuration
+        // Enable Firestore debugging
+        firebase.firestore.setLogLevel('debug');
+
+        // Single Firebase configuration (remove dual database setup for simplicity)
         const firebaseConfig = {
-            apiKey: "AIzaSyCEzHKfdM45rUteGc1U1JyfmAbGXEfy1OU",
-            authDomain: "dextra25-39f8c.firebaseapp.com",
-            projectId: "dextra25-39f8c",
-            storageBucket: "dextra25-39f8c.firebasestorage.app",
-            messagingSenderId: "745553567914",
-            appId: "1:745553567914:web:903f73d821a6915cd730d3",
-            measurementId: "G-CQC2P55J1P"
+            // Replace with your Firebase project configuration
+            apiKey: "YOUR_API_KEY",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            databaseURL: "https://your-project-id.firebaseio.com",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         // Initialize Firebase
@@ -284,20 +380,31 @@
         const teamsCollection = db.collection('teams');
         const eventsCollection = db.collection('events');
 
-        // DOM elements
+        // DOM elements - Scoreboard Tabs
+        const overallScoreTab = document.getElementById('overallScoreTab');
+        const artsScoreTab = document.getElementById('artsScoreTab');
+        const sportsScoreTab = document.getElementById('sportsScoreTab');
+        const overallScoreboardSection = document.getElementById('overallScoreboardSection');
+        const artsScoreboardSection = document.getElementById('artsScoreboardSection');
+        const sportsScoreboardSection = document.getElementById('sportsScoreboardSection');
+        const artsTeamStandings = document.getElementById('artsTeamStandings');
+        const sportsTeamStandings = document.getElementById('sportsTeamStandings');
         const loginBtn = document.getElementById('loginBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const scoreboardTab = document.getElementById('scoreboardTab');
         const eventsTab = document.getElementById('eventsTab');
+        const sportsTab = document.getElementById('sportsTab');
         const adminTab = document.getElementById('adminTab');
         const scoreboardView = document.getElementById('scoreboardView');
         const eventsView = document.getElementById('eventsView');
+        const sportsView = document.getElementById('sportsView');
         const adminView = document.getElementById('adminView');
         const loginForm = document.getElementById('loginForm');
         const adminControls = document.getElementById('adminControls');
         const loginSubmitBtn = document.getElementById('loginSubmitBtn');
         const teamStandings = document.getElementById('teamStandings');
         const eventsList = document.getElementById('eventsList');
+        const sportsList = document.getElementById('sportsList');
         const resultEvent = document.getElementById('resultEvent');
         const firstPlace = document.getElementById('firstPlace');
         const firstParticipant = document.getElementById('firstParticipant');
@@ -313,13 +420,48 @@
         const deleteTeamSelect = document.getElementById('deleteTeamSelect');
         const deleteTeamBtn = document.getElementById('deleteTeamBtn');
 
-        // Tab switching
+        // Scoreboard tab switching
+        overallScoreTab.addEventListener('click', () => {
+            showScoreboardTab(overallScoreboardSection, overallScoreTab);
+        });
+
+        artsScoreTab.addEventListener('click', () => {
+            showScoreboardTab(artsScoreboardSection, artsScoreTab);
+        });
+
+        sportsScoreTab.addEventListener('click', () => {
+            showScoreboardTab(sportsScoreboardSection, sportsScoreTab);
+        });
+
+        function showScoreboardTab(sectionElement, tabElement) {
+            // Hide all sections
+            overallScoreboardSection.classList.add('hidden');
+            artsScoreboardSection.classList.add('hidden');
+            sportsScoreboardSection.classList.add('hidden');
+
+            // Reset all tabs
+            overallScoreTab.classList.remove('border-indigo-600', 'text-indigo-600');
+            overallScoreTab.classList.add('border-transparent');
+            artsScoreTab.classList.remove('border-indigo-600', 'text-indigo-600');
+            artsScoreTab.classList.add('border-transparent');
+            sportsScoreTab.classList.remove('border-indigo-600', 'text-indigo-600');
+            sportsScoreTab.classList.add('border-transparent');
+
+            // Show selected section and activate tab
+            sectionElement.classList.remove('hidden');
+            tabElement.classList.remove('border-transparent');
+            tabElement.classList.add('border-indigo-600', 'text-indigo-600');
+        }
         scoreboardTab.addEventListener('click', () => {
             showTab(scoreboardView, scoreboardTab);
         });
 
         eventsTab.addEventListener('click', () => {
             showTab(eventsView, eventsTab);
+        });
+
+        sportsTab.addEventListener('click', () => {
+            showTab(sportsView, sportsTab);
         });
 
         adminTab.addEventListener('click', () => {
@@ -330,6 +472,7 @@
             // Hide all views
             scoreboardView.classList.add('hidden');
             eventsView.classList.add('hidden');
+            sportsView.classList.add('hidden');
             adminView.classList.add('hidden');
 
             // Remove active class from all tabs
@@ -337,6 +480,8 @@
             scoreboardTab.classList.add('text-gray-600');
             eventsTab.classList.remove('text-indigo-700', 'border-b-2', 'border-indigo-700');
             eventsTab.classList.add('text-gray-600');
+            sportsTab.classList.remove('text-indigo-700', 'border-b-2', 'border-indigo-700');
+            sportsTab.classList.add('text-gray-600');
             adminTab.classList.remove('text-indigo-700', 'border-b-2', 'border-indigo-700');
             adminTab.classList.add('text-gray-600');
 
@@ -358,7 +503,8 @@
 
                 // Load admin data
                 loadEvents();
-                loadTeams();
+                loadSports();
+                loadScoreboard();
                 populateAdminSelects();
             } else {
                 // User is signed out
@@ -396,250 +542,442 @@
 
         // Load scoreboard data
         function loadScoreboard() {
-            teamsCollection.orderBy('totalPoints', 'desc').get()
-                .then(querySnapshot => {
-                    // Clear existing content
-                    teamStandings.innerHTML = '';
+            console.log("Loading scoreboard data...");
 
-                    // Array to store all teams for proper ranking
-                    let teams = [];
+            teamsCollection.get()
+                .then(querySnapshot => {
+                    // Arrays to store teams by type
+                    let allTeams = [];
+                    let artsTeams = [];
+                    let sportsTeams = [];
+
                     querySnapshot.forEach(doc => {
                         const team = doc.data();
                         team.id = doc.id;
-                        teams.push(team);
-                    });
 
-                    // Sort teams by points (highest first)
-                    teams.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+                        // Add to all teams
+                        allTeams.push(team);
 
-                    // Create rank - handle ties by giving same rank
-                    let currentRank = 1;
-                    let previousPoints = -1;
-                    let skippedRanks = 0;
-
-                    teams.forEach((team, index) => {
-                        // Set the rank (handle ties)
-                        if (index === 0) {
-                            team.rank = 1;
-                            previousPoints = team.totalPoints || 0;
+                        // Add to specific type array
+                        if (team.eventType === 'sports') {
+                            sportsTeams.push(team);
                         } else {
-                            if ((team.totalPoints || 0) === previousPoints) {
-                                // Tie - same rank as previous team
-                                team.rank = currentRank;
-                                skippedRanks++;
-                            } else {
-                                // Not a tie - increment rank (accounting for skipped ranks)
-                                currentRank = index + 1;
-                                team.rank = currentRank;
-                                previousPoints = team.totalPoints || 0;
-                                skippedRanks = 0;
-                            }
+                            artsTeams.push(team);
                         }
                     });
 
-                    // Add teams to the table
-                    teams.forEach(team => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.rank}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="h-6 w-6 rounded-full mr-3" style="background-color: ${team.color || '#3B82F6'}"></div>
-                                    <div class="text-sm font-medium text-gray-900">${team.name}</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.totalPoints || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.firstPlaces || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.secondPlaces || 0}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.thirdPlaces || 0}</td>
-                        `;
-                        teamStandings.appendChild(row);
-                    });
+                    // Populate overall scoreboard
+                    populateScoreboard(teamStandings, allTeams);
+
+                    // Populate arts scoreboard
+                    populateScoreboard(artsTeamStandings, artsTeams);
+
+                    // Populate sports scoreboard
+                    populateScoreboard(sportsTeamStandings, sportsTeams);
                 })
                 .catch(error => {
                     console.error("Error loading scoreboard:", error);
                 });
         }
 
-        // Load events and winners
+        // Helper function to populate scoreboard
+        function populateScoreboard(tableBody, teams) {
+            // Clear existing content
+            tableBody.innerHTML = '';
+
+            if (teams.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        No teams found
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                return;
+            }
+
+            // Sort teams by points (highest first)
+            teams.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+
+            // Create rank - handle ties by giving same rank
+            let currentRank = 1;
+            let previousPoints = -1;
+            let skippedRanks = 0;
+
+            teams.forEach((team, index) => {
+                // Set the rank (handle ties)
+                if (index === 0) {
+                    team.rank = 1;
+                    previousPoints = team.totalPoints || 0;
+                } else {
+                    if ((team.totalPoints || 0) === previousPoints) {
+                        // Tie - same rank as previous team
+                        team.rank = currentRank;
+                        skippedRanks++;
+                    } else {
+                        // Not a tie - increment rank (accounting for skipped ranks)
+                        currentRank = index + 1;
+                        team.rank = currentRank;
+                        previousPoints = team.totalPoints || 0;
+                        skippedRanks = 0;
+                    }
+                }
+            });
+
+            // Add teams to the table
+            teams.forEach(team => {
+                const row = document.createElement('tr');
+
+                const eventType = team.eventType || '';
+                const typeClass = eventType === 'sports' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800';
+                const typeText = eventType === 'sports' ? 'S' : 'A';
+                const typeIndicator = eventType ?
+                    `<span class="inline-block ${typeClass} text-xs px-1 py-0.5 rounded ml-2">${typeText}</span>` : '';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.rank}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="h-6 w-6 rounded-full mr-3" style="background-color: ${team.color || '#3B82F6'}"></div>
+                            <div class="text-sm font-medium text-gray-900">
+                                ${team.name}
+                                ${typeIndicator}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.totalPoints || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.firstPlaces || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.secondPlaces || 0}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.thirdPlaces || 0}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load arts events and winners
         function loadEvents() {
-            eventsCollection.orderBy('createdAt', 'desc').get()
+            console.log("Loading arts events...");
+            eventsCollection.where("eventType", "==", "arts").get()
                 .then(querySnapshot => {
                     // Clear existing content
                     eventsList.innerHTML = '';
 
-                    resultEvent.innerHTML = '<option value="">Select an event</option>';
-                    deleteEventSelect.innerHTML = '<option value="">Select an event</option>';
+                    if (querySnapshot.empty) {
+                        console.log("No arts events found");
+                        eventsList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No arts events found. Add some events from the admin panel.</div>';
+                        return;
+                    }
+
+                    console.log(`Found ${querySnapshot.size} arts events`);
 
                     querySnapshot.forEach((doc) => {
                         const event = doc.data();
                         const eventId = doc.id;
 
+                        console.log("Loading arts event:", event.name);
+
                         // Add to events view
-                        const card = document.createElement('div');
-                        card.className = 'bg-white rounded-lg shadow-md overflow-hidden';
-
-                        let winnersHtml = '';
-                        if (event.results) {
-                            winnersHtml = `
-                                <div class="p-4 border-t">
-                                    <h4 class="font-medium text-gray-700 mb-2">Winners</h4>
-                                    <div class="flex items-center mb-2">
-                                        <div class="bg-yellow-400 w-6 h-6 rounded-full flex items-center justify-center mr-2">1</div>
-                                        <div>
-                                            <span class="text-sm font-medium">${event.results.first || 'Not announced'}</span>
-                                            ${event.results.firstParticipant ? `<p class="text-xs text-gray-600">${event.results.firstParticipant}</p>` : ''}
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <div class="bg-gray-300 w-6 h-6 rounded-full flex items-center justify-center mr-2">2</div>
-                                        <div>
-                                            <span class="text-sm font-medium">${event.results.second || 'Not announced'}</span>
-                                            ${event.results.secondParticipant ? `<p class="text-xs text-gray-600">${event.results.secondParticipant}</p>` : ''}
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <div class="bg-yellow-700 w-6 h-6 rounded-full flex items-center justify-center mr-2">3</div>
-                                        <div>
-                                            <span class="text-sm font-medium">${event.results.third || 'Not announced'}</span>
-                                            ${event.results.thirdParticipant ? `<p class="text-xs text-gray-600">${event.results.thirdParticipant}</p>` : ''}
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            winnersHtml = `
-                                <div class="p-4 border-t">
-                                    <span class="text-sm italic text-gray-500">Results not yet announced</span>
-                                </div>
-                            `;
-                        }
-
-                        const pointsText = event.pointSystem === 'enhanced' ? 'Points: 10-7-4' : 'Points: 5-3-1';
-
-                        card.innerHTML = `
-                            <div class="p-4">
-                                <h3 class="font-bold text-lg text-gray-800">${event.name}</h3>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">${event.category || 'Group'}</span>
-                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${pointsText}</span>
-                                </div>
-                            </div>
-                            ${winnersHtml}
-                        `;
-
+                        const card = createEventCard(event, 'arts');
                         eventsList.appendChild(card);
-
-                        // Add to admin dropdowns
-                        const option = document.createElement('option');
-                        option.value = eventId;
-                        option.textContent = event.name;
-                        resultEvent.appendChild(option.cloneNode(true));
-
-                        const deleteOption = document.createElement('option');
-                        deleteOption.value = eventId;
-                        deleteOption.textContent = event.name;
-                        deleteEventSelect.appendChild(deleteOption);
                     });
                 })
                 .catch(error => {
-                    console.error("Error loading events:", error);
+                    console.error("Error loading arts events:", error);
+                    eventsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading events: ${error.message}</div>`;
                 });
         }
 
-        // Load teams for admin
-        function loadTeams() {
-            teamsCollection.orderBy('name').get()
+        // Load sports events and winners
+        function loadSports() {
+            console.log("Loading sports events...");
+            eventsCollection.where("eventType", "==", "sports").get()
                 .then(querySnapshot => {
-                    // Clear existing options
-                    populateTeamsDropdowns(querySnapshot);
+                    // Clear existing content
+                    sportsList.innerHTML = '';
+
+                    if (querySnapshot.empty) {
+                        console.log("No sports events found");
+                        sportsList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No sports events found. Add some sports events from the admin panel.</div>';
+                        return;
+                    }
+
+                    console.log(`Found ${querySnapshot.size} sports events`);
+
+                    querySnapshot.forEach((doc) => {
+                        const event = doc.data();
+                        const eventId = doc.id;
+
+                        console.log("Loading sports event:", event.name);
+
+                        // Add to sports view
+                        const card = createEventCard(event, 'sports');
+                        sportsList.appendChild(card);
+                    });
                 })
                 .catch(error => {
-                    console.error("Error loading teams:", error);
+                    console.error("Error loading sports events:", error);
+                    sportsList.innerHTML = `<div class="col-span-full text-center py-8 text-red-500">Error loading events: ${error.message}</div>`;
                 });
         }
 
-        // Populate team dropdowns
-        function populateTeamsDropdowns(querySnapshot) {
-            // Clear existing options
-            firstPlace.innerHTML = '<option value="">Select Team</option>';
-            secondPlace.innerHTML = '<option value="">Select Team</option>';
-            thirdPlace.innerHTML = '<option value="">Select Team</option>';
-            deleteTeamSelect.innerHTML = '<option value="">Select Team</option>';
+        // Helper function to create event cards
+        function createEventCard(event, sourceDb) {
+            console.log(`Creating card for ${sourceDb} event:`, event.name);
 
-            querySnapshot.forEach((doc) => {
-                const team = doc.data();
-                const teamId = doc.id;
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-md overflow-hidden';
 
-                // Create options for all dropdowns
-                const option = document.createElement('option');
-                option.value = team.name; // Using team name as the value for results
-                option.textContent = team.name;
+            let winnersHtml = '';
+            if (event.results) {
+                winnersHtml = `
+                    <div class="p-4 border-t">
+                        <h4 class="font-medium text-gray-700 mb-2">Winners</h4>
+                        <div class="flex items-center mb-2">
+                            <div class="bg-yellow-400 w-6 h-6 rounded-full flex items-center justify-center mr-2">1</div>
+                            <div>
+                                <span class="text-sm font-medium">${event.results.first || 'Not announced'}</span>
+                                ${event.results.firstParticipant ? `<p class="text-xs text-gray-600">${event.results.firstParticipant}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <div class="bg-gray-300 w-6 h-6 rounded-full flex items-center justify-center mr-2">2</div>
+                            <div>
+                                <span class="text-sm font-medium">${event.results.second || 'Not announced'}</span>
+                                ${event.results.secondParticipant ? `<p class="text-xs text-gray-600">${event.results.secondParticipant}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-yellow-700 w-6 h-6 rounded-full flex items-center justify-center mr-2">3</div>
+                            <div>
+                                <span class="text-sm font-medium">${event.results.third || 'Not announced'}</span>
+                                ${event.results.thirdParticipant ? `<p class="text-xs text-gray-600">${event.results.thirdParticipant}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                winnersHtml = `
+                    <div class="p-4 border-t">
+                        <span class="text-sm italic text-gray-500">Results not yet announced</span>
+                    </div>
+                `;
+            }
 
-                firstPlace.appendChild(option.cloneNode(true));
-                secondPlace.appendChild(option.cloneNode(true));
-                thirdPlace.appendChild(option.cloneNode(true));
+            const pointsText = event.pointSystem === 'enhanced' ? 'Points: 10-7-4' :
+                event.pointSystem === 'enhancedS' ? 'Points: 10-6-3' :
+                    event.pointSystem === 'sports' ? 'Points: 5-3-2' : 'Points: 5-3-1';
 
-                // For delete dropdown, use document ID
-                const deleteOption = document.createElement('option');
-                deleteOption.value = teamId;
-                deleteOption.textContent = team.name;
-                deleteTeamSelect.appendChild(deleteOption);
-            });
+            // Add event type badge
+            const typeClass = sourceDb === 'sports' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800';
+            const typeText = sourceDb === 'sports' ? 'Sports' : 'Arts';
+
+            card.innerHTML = `
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-gray-800">${event.name}</h3>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                        <span class="inline-block ${typeClass} text-xs px-2 py-1 rounded-full">${typeText}</span>
+                        <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">${event.category || 'Group'}</span>
+                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${pointsText}</span>
+                    </div>
+                </div>
+                ${winnersHtml}
+            `;
+
+            return card;
         }
 
         // Populate all admin select fields
         function populateAdminSelects() {
-            // This combines loading teams and events for all admin dropdowns
-            eventsCollection.orderBy('createdAt', 'desc').get()
-                .then(eventsSnapshot => {
-                    // Clear existing event options
+            // Get events
+            eventsCollection.get()
+                .then(querySnapshot => {
+                    // Clear existing event options with proper default options
                     resultEvent.innerHTML = '<option value="">Select an event</option>';
                     deleteEventSelect.innerHTML = '<option value="">Select an event</option>';
 
-                    eventsSnapshot.forEach((doc) => {
+                    let artsCount = 0;
+                    let sportsCount = 0;
+
+                    querySnapshot.forEach((doc) => {
                         const event = doc.data();
                         const eventId = doc.id;
+                        const eventType = event.eventType || 'arts'; // Default to arts if not specified
+
+                        if (eventType === 'arts') {
+                            artsCount++;
+                        } else {
+                            sportsCount++;
+                        }
 
                         // Add to admin dropdowns
                         const option = document.createElement('option');
                         option.value = eventId;
-                        option.textContent = event.name;
+                        option.textContent = `${event.name} (${eventType === 'sports' ? 'Sports' : 'Arts'})`;
                         resultEvent.appendChild(option.cloneNode(true));
                         deleteEventSelect.appendChild(option.cloneNode(true));
                     });
 
-                    // Now load teams
-                    return teamsCollection.orderBy('name').get();
+                    console.log(`Admin selects populated with ${artsCount} arts events and ${sportsCount} sports events`);
+
+                    // Load teams
+                    return teamsCollection.get();
                 })
-                .then(teamsSnapshot => {
-                    populateTeamsDropdowns(teamsSnapshot);
+                .then(querySnapshot => {
+                    // Clear existing options with proper default options
+                    firstPlace.innerHTML = '<option value="">Select Team</option>';
+                    secondPlace.innerHTML = '<option value="">Select Team</option>';
+                    thirdPlace.innerHTML = '<option value="">Select Team</option>';
+                    deleteTeamSelect.innerHTML = '<option value="">Select Team</option>';
+
+                    querySnapshot.forEach((doc) => {
+                        const team = doc.data();
+                        const teamId = doc.id;
+                        const eventType = team.eventType || ''; // Get event type if exists
+
+                        // Create options for winner dropdowns
+                        const option = document.createElement('option');
+                        option.value = team.name;
+                        option.textContent = team.name + (eventType ? ` (${eventType})` : '');
+
+                        firstPlace.appendChild(option.cloneNode(true));
+                        secondPlace.appendChild(option.cloneNode(true));
+                        thirdPlace.appendChild(option.cloneNode(true));
+
+                        // For delete dropdown, use document ID
+                        const deleteOption = document.createElement('option');
+                        deleteOption.value = teamId;
+                        deleteOption.textContent = team.name + (eventType ? ` (${eventType})` : '');
+                        deleteTeamSelect.appendChild(deleteOption);
+                    });
+
+                    console.log(`Admin selects populated with ${querySnapshot.size} teams`);
                 })
                 .catch(error => {
                     console.error("Error populating admin selects:", error);
+                    alert(`Error loading dropdown options: ${error.message}`);
                 });
         }
+
+        // Event listener for result event selection
+        resultEvent.addEventListener('change', () => {
+            const eventId = resultEvent.value;
+            if (!eventId) {
+                // Clear the form if no event selected
+                firstPlace.value = '';
+                firstParticipant.value = '';
+                secondPlace.value = '';
+                secondParticipant.value = '';
+                thirdPlace.value = '';
+                thirdParticipant.value = '';
+                return;
+            }
+
+            console.log(`Loading results for event ID: ${eventId}`);
+
+            // Get event details to show point system
+            eventsCollection.doc(eventId).get()
+                .then(doc => {
+                    if (!doc.exists) {
+                        console.error("Event not found:", eventId);
+                        alert("Event not found. It may have been deleted.");
+                        return;
+                    }
+
+                    const event = doc.data();
+                    console.log("Event data loaded:", event);
+
+                    // If there are existing results, populate the form
+                    if (event.results) {
+                        console.log("Event has results:", event.results);
+
+                        // Set dropdown values safely
+                        const setSelectValueSafely = (selectElement, value) => {
+                            if (!value) {
+                                selectElement.value = '';
+                                return;
+                            }
+
+                            // Check if the value exists in options
+                            let valueExists = false;
+                            for (let i = 0; i < selectElement.options.length; i++) {
+                                if (selectElement.options[i].value === value) {
+                                    valueExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (valueExists) {
+                                selectElement.value = value;
+                            } else {
+                                console.warn(`Value not found in options: ${value}`);
+                                selectElement.value = '';
+                            }
+                        };
+
+                        // Set values safely
+                        setSelectValueSafely(firstPlace, event.results.first || '');
+                        setSelectValueSafely(secondPlace, event.results.second || '');
+                        setSelectValueSafely(thirdPlace, event.results.third || '');
+
+                        // Set participant names
+                        firstParticipant.value = event.results.firstParticipant || '';
+                        secondParticipant.value = event.results.secondParticipant || '';
+                        thirdParticipant.value = event.results.thirdParticipant || '';
+                    } else {
+                        console.log("Event has no results");
+
+                        // Clear the form if no results
+                        firstPlace.value = '';
+                        firstParticipant.value = '';
+                        secondPlace.value = '';
+                        secondParticipant.value = '';
+                        thirdPlace.value = '';
+                        thirdParticipant.value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error getting event:", error);
+                    alert("Error loading event data: " + error.message);
+                });
+        });
 
         // Add new event
         addEventBtn.addEventListener('click', () => {
             const name = document.getElementById('eventName').value.trim();
             const category = document.getElementById('eventCategory').value;
             const pointSystem = document.getElementById('eventPointSystem').value;
+            const eventType = document.getElementById('eventType').value;
 
             if (!name) {
                 alert('Please enter an event name');
                 return;
             }
 
-            eventsCollection.add({
+            console.log(`Adding new ${eventType} event: ${name}`);
+
+            // Create event data object with explicit eventType field
+            const eventData = {
                 name,
                 category,
                 pointSystem,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            })
-                .then(() => {
+                eventType,
+                createdAt: firebase.firestore.Timestamp.now()
+            };
+
+            console.log("Event data to add:", eventData);
+
+            eventsCollection.add(eventData)
+                .then((docRef) => {
+                    console.log(`Event added with ID: ${docRef.id}`);
                     document.getElementById('eventName').value = '';
-                    loadEvents();
+
+                    // Reload appropriate data
+                    if (eventType === 'sports') {
+                        loadSports();
+                    } else {
+                        loadEvents();
+                    }
+
                     populateAdminSelects();
                     alert('Event added successfully!');
                 })
@@ -649,60 +987,30 @@
                 });
         });
 
-        // Event listener for result event selection
-        resultEvent.addEventListener('change', () => {
-            const eventId = resultEvent.value;
-            if (!eventId) return;
-
-            // Get event details to show point system
-            eventsCollection.doc(eventId).get()
-                .then(doc => {
-                    if (doc.exists) {
-                        const event = doc.data();
-
-                        // If there are existing results, populate the form
-                        if (event.results) {
-                            firstPlace.value = event.results.first || '';
-                            firstParticipant.value = event.results.firstParticipant || '';
-                            secondPlace.value = event.results.second || '';
-                            secondParticipant.value = event.results.secondParticipant || '';
-                            thirdPlace.value = event.results.third || '';
-                            thirdParticipant.value = event.results.thirdParticipant || '';
-                        } else {
-                            // Clear the form if no results
-                            firstPlace.value = '';
-                            firstParticipant.value = '';
-                            secondPlace.value = '';
-                            secondParticipant.value = '';
-                            thirdPlace.value = '';
-                            thirdParticipant.value = '';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error("Error getting event:", error);
-                });
-        });
-
         // Add event results
         addResultBtn.addEventListener('click', () => {
             const eventId = document.getElementById('resultEvent').value;
-            const first = document.getElementById('firstPlace').value;
-            const firstParticipant = document.getElementById('firstParticipant').value.trim();
-            const second = document.getElementById('secondPlace').value;
-            const secondParticipant = document.getElementById('secondParticipant').value.trim();
-            const third = document.getElementById('thirdPlace').value;
-            const thirdParticipant = document.getElementById('thirdParticipant').value.trim();
 
             if (!eventId) {
                 alert('Please select an event');
                 return;
             }
 
+            // Get place values
+            const first = document.getElementById('firstPlace').value;
+            const firstParticipantValue = document.getElementById('firstParticipant').value.trim();
+            const second = document.getElementById('secondPlace').value;
+            const secondParticipantValue = document.getElementById('secondParticipant').value.trim();
+            const third = document.getElementById('thirdPlace').value;
+            const thirdParticipantValue = document.getElementById('thirdParticipant').value.trim();
+
             if (!first && !second && !third) {
                 alert('Please select at least one winner');
                 return;
             }
+
+            console.log(`Saving results for event ID: ${eventId}`);
+            console.log(`Winners: ${first}, ${second}, ${third}`);
 
             // Get event details to determine point system
             eventsCollection.doc(eventId).get()
@@ -714,6 +1022,9 @@
 
                     const event = doc.data();
                     const pointSystem = event.pointSystem || 'standard';
+                    const eventType = event.eventType || 'arts';
+
+                    console.log(`Event point system: ${pointSystem}, type: ${eventType}`);
 
                     // Define points based on point system
                     let firstPoints = 5, secondPoints = 3, thirdPoints = 1;
@@ -721,10 +1032,90 @@
                         firstPoints = 10;
                         secondPoints = 7;
                         thirdPoints = 4;
+                    } else if (pointSystem === 'enhancedS') {
+                        firstPoints = 10;
+                        secondPoints = 6;
+                        thirdPoints = 3;
+                    } else if (pointSystem === 'sports') {
+                        firstPoints = 5;
+                        secondPoints = 3;
+                        thirdPoints = 2;
                     }
 
-                    // Start a batch for transaction
-                    const batch = db.batch();
+                    // Process each team
+                    const processTeam = async (teamName, points, placesField, oldTeamName) => {
+                        if (!teamName) return false;
+
+                        // Skip if same as old team
+                        if (teamName === oldTeamName) return false;
+
+                        // If old team exists, subtract points from it
+                        if (oldTeamName) {
+                            console.log(`Subtracting points from old team: ${oldTeamName}`);
+
+                            // Find and update old team
+                            const oldTeamQuery = await teamsCollection.where('name', '==', oldTeamName).get();
+                            if (!oldTeamQuery.empty) {
+                                const oldTeamDoc = oldTeamQuery.docs[0];
+
+                                // Subtract points
+                                await oldTeamDoc.ref.update({
+                                    totalPoints: firebase.firestore.FieldValue.increment(-points),
+                                    [placesField]: firebase.firestore.FieldValue.increment(-1)
+                                });
+
+                                console.log(`Subtracted ${points} points from ${oldTeamName}`);
+                            }
+                        }
+
+                        // Find team
+                        console.log(`Looking for team: ${teamName}`);
+                        const teamQuery = await teamsCollection.where('name', '==', teamName).get();
+
+                        if (teamQuery.empty) {
+                            // Team doesn't exist, create it
+                            console.log(`Team not found, creating new team: ${teamName}`);
+
+                            await teamsCollection.add({
+                                name: teamName,
+                                color: '#' + Math.floor(Math.random() * 16777215).toString(16), // Random color
+                                totalPoints: points,
+                                [placesField]: 1,
+                                firstPlaces: placesField === 'firstPlaces' ? 1 : 0,
+                                secondPlaces: placesField === 'secondPlaces' ? 1 : 0,
+                                thirdPlaces: placesField === 'thirdPlaces' ? 1 : 0,
+                                eventType,
+                                createdAt: firebase.firestore.Timestamp.now()
+                            });
+
+                            console.log(`Created new team: ${teamName} with ${points} points`);
+                        } else {
+                            // Team exists, update it
+                            const teamDoc = teamQuery.docs[0];
+
+                            // Update team's event type if not already set
+                            const currentTeam = teamDoc.data();
+                            if (!currentTeam.eventType) {
+                                await teamDoc.ref.update({
+                                    eventType,
+                                    totalPoints: firebase.firestore.FieldValue.increment(points),
+                                    [placesField]: firebase.firestore.FieldValue.increment(1)
+                                });
+
+                                console.log(`Updated team: ${teamName} with event type ${eventType} and added ${points} points`);
+                            } else {
+                                // Just update points
+                                await teamDoc.ref.update({
+                                    totalPoints: firebase.firestore.FieldValue.increment(points),
+                                    [placesField]: firebase.firestore.FieldValue.increment(1)
+                                });
+
+                                console.log(`Added ${points} points to ${teamName}`);
+                            }
+                        }
+
+                        return true;
+                    };
 
                     // First, get previous results if any
                     const previousResults = event.results || {};
@@ -732,116 +1123,50 @@
                     const prevSecond = previousResults.second;
                     const prevThird = previousResults.third;
 
-                    // If there are previous winners, we need to subtract their points
-                    const subtractPoints = async () => {
-                        // Helper function to update team stats (subtract points)
-                        const updateTeamStatsSubtract = async (teamName, points, placesField) => {
-                            if (!teamName) return null;
+                    console.log(`Previous winners: ${prevFirst}, ${prevSecond}, ${prevThird}`);
 
-                            const teamQuery = await teamsCollection.where('name', '==', teamName).limit(1).get();
+                    // Process all team updates 
+                    Promise.all([
+                        processTeam(first, firstPoints, 'firstPlaces', prevFirst),
+                        processTeam(second, secondPoints, 'secondPlaces', prevSecond),
+                        processTeam(third, thirdPoints, 'thirdPlaces', prevThird)
+                    ])
+                        .then(() => {
+                            // Update event results
+                            return eventsCollection.doc(eventId).update({
+                                results: {
+                                    first: first || '',
+                                    firstParticipant: firstParticipantValue,
+                                    second: second || '',
+                                    secondParticipant: secondParticipantValue,
+                                    third: third || '',
+                                    thirdParticipant: thirdParticipantValue,
+                                    updatedAt: firebase.firestore.Timestamp.now()
+                                }
+                            });
+                        })
+                        .then(() => {
+                            console.log("Results saved successfully");
 
-                            if (teamQuery.empty) return null;
+                            // Reset form
+                            document.getElementById('firstParticipant').value = '';
+                            document.getElementById('secondParticipant').value = '';
+                            document.getElementById('thirdParticipant').value = '';
 
-                            const teamDoc = teamQuery.docs[0];
-                            const teamRef = teamDoc.ref;
-
-                            // Prepare updates (subtract points)
-                            const updates = {};
-                            updates.totalPoints = firebase.firestore.FieldValue.increment(-points);
-                            updates[placesField] = firebase.firestore.FieldValue.increment(-1);
-
-                            batch.update(teamRef, updates);
-                        };
-
-                        const teamUpdatesPromises = [];
-                        if (prevFirst && prevFirst !== first) {
-                            teamUpdatesPromises.push(updateTeamStatsSubtract(prevFirst, firstPoints, 'firstPlaces'));
-                        }
-                        if (prevSecond && prevSecond !== second) {
-                            teamUpdatesPromises.push(updateTeamStatsSubtract(prevSecond, secondPoints, 'secondPlaces'));
-                        }
-                        if (prevThird && prevThird !== third) {
-                            teamUpdatesPromises.push(updateTeamStatsSubtract(prevThird, thirdPoints, 'thirdPlaces'));
-                        }
-
-                        await Promise.all(teamUpdatesPromises);
-                    };
-
-                    // Update event results
-                    const eventRef = eventsCollection.doc(eventId);
-                    batch.update(eventRef, {
-                        results: {
-                            first,
-                            firstParticipant,
-                            second,
-                            secondParticipant,
-                            third,
-                            thirdParticipant,
-                            pointSystem,
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }
-                    });
-
-                    // Helper function to update team stats (add points)
-                    const updateTeamStats = async (teamName, points, placesField) => {
-                        if (!teamName) return null;
-
-                        // If team name is same as previous, and already received points, don't add again
-                        if (
-                            (teamName === prevFirst && placesField === 'firstPlaces') ||
-                            (teamName === prevSecond && placesField === 'secondPlaces') ||
-                            (teamName === prevThird && placesField === 'thirdPlaces')
-                        ) {
-                            return null;
-                        }
-
-                        // Get team document by name
-                        const teamQuery = await teamsCollection.where('name', '==', teamName).limit(1).get();
-
-                        if (teamQuery.empty) {
-                            console.warn(`Team not found: ${teamName}`);
-                            return null;
-                        }
-
-                        const teamDoc = teamQuery.docs[0];
-                        const teamRef = teamDoc.ref;
-
-                        // Prepare updates
-                        const updates = {};
-                        updates.totalPoints = firebase.firestore.FieldValue.increment(points);
-                        updates[placesField] = firebase.firestore.FieldValue.increment(1);
-
-                        batch.update(teamRef, updates);
-                    };
-
-                    // First subtract points from previous winners if needed
-                    return subtractPoints().then(() => {
-                        // Then process team updates for new winners
-                        const teamUpdatesPromises = [];
-                        if (first) teamUpdatesPromises.push(updateTeamStats(first, firstPoints, 'firstPlaces'));
-                        if (second) teamUpdatesPromises.push(updateTeamStats(second, secondPoints, 'secondPlaces'));
-                        if (third) teamUpdatesPromises.push(updateTeamStats(third, thirdPoints, 'thirdPlaces'));
-
-                        return Promise.all(teamUpdatesPromises);
-                    }).then(() => {
-                        // Commit the batch
-                        return batch.commit();
-                    });
-                })
-                .then(() => {
-                    // Reset form
-                    document.getElementById('firstParticipant').value = '';
-                    document.getElementById('secondParticipant').value = '';
-                    document.getElementById('thirdParticipant').value = '';
-
-                    // Reload data
-                    loadEvents();
-                    loadScoreboard();
-                    alert('Results saved successfully!');
+                            // Reload data
+                            loadEvents();
+                            loadSports();
+                            loadScoreboard();
+                            alert('Results saved successfully!');
+                        })
+                        .catch(error => {
+                            console.error("Error saving results:", error);
+                            alert(`Error saving results: ${error.message}`);
+                        });
                 })
                 .catch(error => {
-                    console.error("Error saving results:", error);
-                    alert(`Error saving results: ${error.message}`);
+                    console.error("Error getting event:", error);
+                    alert(`Error getting event: ${error.message}`);
                 });
         });
 
@@ -849,19 +1174,24 @@
         addTeamBtn.addEventListener('click', () => {
             const name = document.getElementById('teamName').value.trim();
             const color = document.getElementById('teamColor').value;
+            const eventType = document.getElementById('eventType').value;
 
             if (!name) {
                 alert('Please enter a team name');
                 return;
             }
 
+            console.log(`Adding new team: ${name} (${eventType})`);
+
             // Check if team already exists
             teamsCollection.where('name', '==', name).get()
                 .then(querySnapshot => {
                     if (!querySnapshot.empty) {
-                        alert('A team with this name already exists');
+                        alert(`A team with this name already exists`);
                         return;
                     }
+
+                    console.log(`Team doesn't exist, creating new team: ${name}`);
 
                     // Add the new team
                     return teamsCollection.add({
@@ -871,15 +1201,18 @@
                         firstPlaces: 0,
                         secondPlaces: 0,
                         thirdPlaces: 0,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        eventType,
+                        createdAt: firebase.firestore.Timestamp.now()
                     });
                 })
-                .then(() => {
-                    document.getElementById('teamName').value = '';
-                    loadTeams();
-                    loadScoreboard();
-                    populateAdminSelects();
-                    alert('Team added successfully!');
+                .then((docRef) => {
+                    if (docRef) { // Only if previous promise returned a docRef (team was added)
+                        console.log(`Team added with ID: ${docRef.id}`);
+                        document.getElementById('teamName').value = '';
+                        loadScoreboard();
+                        populateAdminSelects();
+                        alert('Team added successfully!');
+                    }
                 })
                 .catch(error => {
                     console.error("Error adding team:", error);
@@ -896,6 +1229,8 @@
                 return;
             }
 
+            console.log(`Deleting event ID: ${eventId}`);
+
             if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
                 eventsCollection.doc(eventId).get()
                     .then(doc => {
@@ -905,17 +1240,16 @@
                         }
 
                         const eventData = doc.data();
-                        // Start a batch for transaction
-                        const batch = db.batch();
-
-                        // Delete the event
-                        batch.delete(eventsCollection.doc(eventId));
+                        console.log(`Deleting event: ${eventData.name}`);
 
                         // If there are results, update team scores
                         const updateTeamPoints = async () => {
                             if (!eventData.results) return;
 
-                            const { first, second, third, pointSystem } = eventData.results;
+                            console.log("Event has results, updating team points");
+
+                            const { first, second, third } = eventData.results;
+                            const pointSystem = eventData.pointSystem || 'standard';
 
                             // Define points based on point system
                             let firstPoints = 5, secondPoints = 3, thirdPoints = 1;
@@ -923,41 +1257,63 @@
                                 firstPoints = 10;
                                 secondPoints = 7;
                                 thirdPoints = 4;
+                            } else if (pointSystem === 'enhancedS') {
+                                firstPoints = 10;
+                                secondPoints = 6;
+                                thirdPoints = 3;
+                            } else if (pointSystem === 'sports') {
+                                firstPoints = 5;
+                                secondPoints = 3;
+                                thirdPoints = 2;
                             }
 
-                            // Helper function to update team stats (subtract points)
-                            const updateTeamStats = async (teamName, points, placesField) => {
-                                if (!teamName) return null;
+                            // Process each team from appropriate database
+                            const processTeam = async (teamName, points, placesField) => {
+                                if (!teamName) return;
 
-                                const teamQuery = await teamsCollection.where('name', '==', teamName).limit(1).get();
+                                console.log(`Removing ${points} points from team: ${teamName}`);
 
-                                if (teamQuery.empty) return null;
+                                // Find team
+                                const teamQuery = await teamsCollection.where('name', '==', teamName).get();
+
+                                if (teamQuery.empty) {
+                                    console.log(`Team not found: ${teamName}`);
+                                    return;
+                                }
 
                                 const teamDoc = teamQuery.docs[0];
-                                const teamRef = teamDoc.ref;
 
-                                // Prepare updates (subtract points)
-                                const updates = {};
-                                updates.totalPoints = firebase.firestore.FieldValue.increment(-points);
-                                updates[placesField] = firebase.firestore.FieldValue.increment(-1);
+                                // Subtract points from team
+                                await teamDoc.ref.update({
+                                    totalPoints: firebase.firestore.FieldValue.increment(-points),
+                                    [placesField]: firebase.firestore.FieldValue.increment(-1)
+                                });
 
-                                batch.update(teamRef, updates);
+                                console.log(`Removed ${points} points from ${teamName}`);
                             };
 
-                            // Process team updates
-                            const teamUpdatesPromises = [];
-                            if (first) teamUpdatesPromises.push(updateTeamStats(first, firstPoints, 'firstPlaces'));
-                            if (second) teamUpdatesPromises.push(updateTeamStats(second, secondPoints, 'secondPlaces'));
-                            if (third) teamUpdatesPromises.push(updateTeamStats(third, thirdPoints, 'thirdPlaces'));
+                            // Process all teams
+                            await Promise.all([
+                                processTeam(first, firstPoints, 'firstPlaces'),
+                                processTeam(second, secondPoints, 'secondPlaces'),
+                                processTeam(third, thirdPoints, 'thirdPlaces')
+                            ]);
 
-                            await Promise.all(teamUpdatesPromises);
+                            console.log("Team points updated");
                         };
 
-                        return updateTeamPoints().then(() => batch.commit());
+                        // First update team points, then delete the event
+                        return updateTeamPoints()
+                            .then(() => {
+                                console.log("Deleting event document");
+                                return eventsCollection.doc(eventId).delete();
+                            });
                     })
                     .then(() => {
+                        console.log("Event deleted successfully");
                         deleteEventSelect.value = '';
                         loadEvents();
+                        loadSports();
                         loadScoreboard();
                         populateAdminSelects();
                         alert('Event deleted successfully!');
@@ -978,6 +1334,8 @@
                 return;
             }
 
+            console.log(`Deleting team ID: ${teamId}`);
+
             if (confirm('Are you sure you want to delete this team? This will also remove their results from events. This action cannot be undone.')) {
                 teamsCollection.doc(teamId).get()
                     .then(doc => {
@@ -989,45 +1347,68 @@
                         const teamData = doc.data();
                         const teamName = teamData.name;
 
-                        // Start a batch for transaction
-                        const batch = db.batch();
-
-                        // Delete the team
-                        batch.delete(teamsCollection.doc(teamId));
+                        console.log(`Deleting team: ${teamName}`);
 
                         // Find all events where this team is a winner and update them
-                        return eventsCollection.where('results.first', '==', teamName).get()
+                        return eventsCollection.get()
                             .then(querySnapshot => {
+                                const updatePromises = [];
+
                                 querySnapshot.forEach(doc => {
-                                    batch.update(doc.ref, {
-                                        'results.first': '',
-                                        'results.firstParticipant': ''
-                                    });
+                                    const event = doc.data();
+
+                                    // Skip events without results
+                                    if (!event.results) return;
+
+                                    // Check if this team is in any of the winners
+                                    const isInResults =
+                                        event.results.first === teamName ||
+                                        event.results.second === teamName ||
+                                        event.results.third === teamName;
+
+                                    if (isInResults) {
+                                        console.log(`Removing team from event: ${event.name}`);
+
+                                        // Create updates to remove team from results
+                                        const updatedResults = { ...event.results };
+
+                                        if (event.results.first === teamName) {
+                                            updatedResults.first = '';
+                                            updatedResults.firstParticipant = '';
+                                        }
+
+                                        if (event.results.second === teamName) {
+                                            updatedResults.second = '';
+                                            updatedResults.secondParticipant = '';
+                                        }
+
+                                        if (event.results.third === teamName) {
+                                            updatedResults.third = '';
+                                            updatedResults.thirdParticipant = '';
+                                        }
+
+                                        // Add update promise
+                                        updatePromises.push(doc.ref.update({
+                                            results: updatedResults
+                                        }));
+                                    }
                                 });
-                                return eventsCollection.where('results.second', '==', teamName).get();
-                            })
-                            .then(querySnapshot => {
-                                querySnapshot.forEach(doc => {
-                                    batch.update(doc.ref, {
-                                        'results.second': '',
-                                        'results.secondParticipant': ''
+
+                                console.log(`Updating ${updatePromises.length} events to remove team`);
+
+                                // Execute all updates and then delete the team
+                                return Promise.all(updatePromises)
+                                    .then(() => {
+                                        console.log("Deleting team document");
+                                        return teamsCollection.doc(teamId).delete();
                                     });
-                                });
-                                return eventsCollection.where('results.third', '==', teamName).get();
-                            })
-                            .then(querySnapshot => {
-                                querySnapshot.forEach(doc => {
-                                    batch.update(doc.ref, {
-                                        'results.third': '',
-                                        'results.thirdParticipant': ''
-                                    });
-                                });
-                                return batch.commit();
                             });
                     })
                     .then(() => {
+                        console.log("Team deleted successfully");
                         deleteTeamSelect.value = '';
                         loadEvents();
+                        loadSports();
                         loadScoreboard();
                         populateAdminSelects();
                         alert('Team deleted successfully!');
@@ -1042,21 +1423,37 @@
         // Initial data load
         loadScoreboard();
         loadEvents();
+        loadSports();
 
         // Set up real-time listeners for data changes
         function setupRealTimeListeners() {
+            console.log("Setting up real-time listeners");
+
             // Listen for changes to teams collection
             teamsCollection.onSnapshot(() => {
+                console.log("Teams collection changed, updating views");
                 loadScoreboard();
-                // Only reload teams dropdown if admin is logged in
+
+                // Only reload admin selects if admin is logged in
                 if (!loginForm.classList.contains('hidden')) {
-                    loadTeams();
+                    populateAdminSelects();
                 }
+            }, error => {
+                console.error("Teams listener error:", error);
             });
 
             // Listen for changes to events collection
             eventsCollection.onSnapshot(() => {
+                console.log("Events collection changed, updating views");
                 loadEvents();
+                loadSports();
+
+                // Only reload admin selects if admin is logged in
+                if (!loginForm.classList.contains('hidden')) {
+                    populateAdminSelects();
+                }
+            }, error => {
+                console.error("Events listener error:", error);
             });
         }
 
