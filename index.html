@@ -361,15 +361,15 @@
 
         // Single Firebase configuration (remove dual database setup for simplicity)
         const firebaseConfig = {
-            // Replace with your Firebase project configuration
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            databaseURL: "https://your-project-id.firebaseio.com",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDJz5YaYI2jW2F94ofgQbRLNR3KLhJ4ECc",
+            authDomain: "dextra-2020b.firebaseapp.com",
+            projectId: "dextra-2020b",
+            storageBucket: "dextra-2020b.firebasestorage.app",
+            messagingSenderId: "202195485837",
+            appId: "1:202195485837:web:2778db8c1105cd1edc8ec4",
+            measurementId: "G-4WS1506N3L"
         };
+
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -425,13 +425,6 @@
             showScoreboardTab(overallScoreboardSection, overallScoreTab);
         });
 
-        artsScoreTab.addEventListener('click', () => {
-            showScoreboardTab(artsScoreboardSection, artsScoreTab);
-        });
-
-        sportsScoreTab.addEventListener('click', () => {
-            showScoreboardTab(sportsScoreboardSection, sportsScoreTab);
-        });
 
         function showScoreboardTab(sectionElement, tabElement) {
             // Hide all sections
