@@ -1446,7 +1446,7 @@
                 // Implement search - can search by certificate_id, event_name, or search_id
                 query = query.where('search_id', '>=', search)
                     .where('search_id', '<=', search + '\uf8ff')
-                    .limit(50);
+                    .limit(20);
             } else {
                 query = query.limit(itemsPerPage);
             }
@@ -1718,7 +1718,13 @@
         // Search certificates
         function searchCertificates() {
             const searchTerm = document.getElementById('certificateSearch').value.trim();
-            loadCertificates(searchTerm);
+
+            if (searchTerm) {
+                loadCertificates(searchTerm);
+            } else {
+                showAlert('Please enter a search ID', 'warning');
+                // loadCertificates(''); // Show instructions
+            }
         }
 
         // Add custom field to form
